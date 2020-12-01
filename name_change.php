@@ -23,10 +23,7 @@ if(isset($_POST['new_name']) && $user['user_access'] == 4 && $user['user_rank'] 
 
 	$nicktest = $mysqli->query("SELECT `user_name` FROM `users` WHERE `user_name` = '$new_name' OR `old_name` = '$new_name' AND `user_name` != '$name'");
 	if($nicktest->num_rows < 1){
-		if (preg_match("/^[a-zA-Z]{2,}[_-]?[a-zA-Z0-9]{2,}$/", $new_name) && strlen($new_name) < $setting['max_username'] && !ctype_digit($new_name) && excluded($exclude_in_username, $new_name_lower) !== true && $new_name !== $lang_system && strlen($new_name) >= 4){
-			if(file_exists('upload/' . $user['user_name'])){
-				rename('upload/' . $user['user_name'], 'upload/' . $new_name);
-			}
+		if (validate_name($new_name, $setting['max_username'], $lang_system) == 1 && excluded($exclude_in_username, $new_name_lower) !== true){
 			$message_nick = "$name $name_it $new_name";
 			setcookie("username","$new_name",time()+ (1000 * 1000 * 100));
 			$mysqli->query("UPDATE `users` SET `user_name` = '$new_name', `old_name` = '$name', `join_chat` = '2' WHERE `user_name` = '$name'");

